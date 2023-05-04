@@ -1,5 +1,96 @@
 {% extends 'base.html' %}
 {% block title %} SPA-TABLE {% endblock title %}
-{% block content %}
-
-{% endblock content %}
+{% block table %}
+<form>
+    <label for="columnsSelect">Фильтрация по столбцу</label>
+    <select id="columnsSelect">
+        <option value="0">Дата</option>
+        <option value="1">Наименование</option>
+        <option value="2">Количество</option>
+        <option value="3">Дистанция</option>
+    </select>
+    <label for="operatorsSelect">Оператор</label>
+    <select id="operatorsSelect">
+        <option value="exact">Равно</option>
+        <option value="contains">Содержит</option>
+        <option value="more">Больше</option>
+        <option value="less">Меньше</option>
+    </select>
+    <label for="lookupText">Выражение</label>
+    <input type="text" id="lookupText">
+    <input type="button" id="execute" onclick="filterTable()" value="Выполнить">
+</form>
+<table id="TableOne">
+    <tr>
+        <th>Дата</th>
+        <th class="clickable" onclick="sortTable(1)">Наименование</th>
+        <th class="clickable" onclick="sortTable(2)">Количество</th>
+        <th class="clickable" onclick="sortTable(3)">Дистанция</th>
+    </tr>
+    {% for row in rows %}
+    <tr>
+        <td>{{ row.date }}</td>
+        <td>{{ row.name }}</td>
+        <td>{{ row.amount }}</td>
+        <td>{{ row.distance }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<script type="text/javascript">
+function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("TableOne");
+    switching = true;
+    dir = "asc";
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount ++;
+        } else {
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+}
+function filterTable() {
+    var column, operator, input, table, tr, td, i, txtValue;
+    column = columnsSelect.value;
+    operator = operatorsSelect.value;
+    input = lookupText.value;
+    table = document.getElementById("TableOne");
+    tr = table.getElementsByTagName("TR");
+    for (i = 1; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("TD")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+{% endblock table %}

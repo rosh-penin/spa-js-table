@@ -8,3 +8,6 @@ class TableRow(models.Model):
     name = models.CharField('Название', max_length=MAX_LENGTH)
     amount = models.IntegerField('Количество')
     distance = models.IntegerField('Расстояние')
+
+    def __str__(self) -> str:
+        return self.name

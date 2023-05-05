@@ -22,4 +22,4 @@ Main page should be accessible from url:
 http://{your_server_ip_or_localhost}:8000/
 ```
 ### Author: Rosh_penin
-### About: Pet project. Just a table with some simple JS sorting-filtering.
+### About: Pet project. Just a html table with some simple JS sorting-filtering.

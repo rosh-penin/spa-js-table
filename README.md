@@ -11,7 +11,7 @@ DB_PORT # Database port
 POSTGRES_USER # Database user
 POSTGRES_PASSWORD # Database password
 ```
-If installing full compose orchestra just simply run
+To install containers run this command from main project directory:
 ```sh
 sudo docker-compose up -d
 ```

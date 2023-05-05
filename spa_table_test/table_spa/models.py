@@ -1,13 +1,17 @@
 from django.db import models
 
-MAX_LENGTH = 100
+from .constants import MAX_LENGTH
 
 
 class TableRow(models.Model):
+    """Simple test model with ordering by date."""
     date = models.DateField('Дата')
     name = models.CharField('Название', max_length=MAX_LENGTH)
     amount = models.IntegerField('Количество')
     distance = models.IntegerField('Расстояние')
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self) -> str:
         return self.name

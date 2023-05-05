@@ -1,10 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block title %} SPA-TABLE {% endblock title %}
 {% block table %}
 <form>
     <label for="columnsSelect">Фильтрация по столбцу</label>
     <select id="columnsSelect">
-        <option value="0">Дата</option>
         <option value="1">Наименование</option>
         <option value="2">Количество</option>
         <option value="3">Дистанция</option>
@@ -27,16 +26,24 @@
         <th class="clickable" onclick="sortTable(2)">Количество</th>
         <th class="clickable" onclick="sortTable(3)">Дистанция</th>
     </tr>
-    {% for row in rows %}
+    {% for row in page %}
     <tr>
-        <td>{{ row.date }}</td>
-        <td>{{ row.name }}</td>
-        <td>{{ row.amount }}</td>
-        <td>{{ row.distance }}</td>
+    <td>{{ row.date }}</td>
+    <td>{{ row.name }}</td>
+    <td>{{ row.amount }}</td>
+    <td>{{ row.distance }}</td>
     </tr>
-    {% endfor %}
+    {% endfor %}  
 </table>
+{% include 'paginator.html' %}
+
 <script type="text/javascript">
+let operatorsFunc = {
+    "exact": function (value, lookup) {return value == lookup},
+    "contains": function (value, lookup) { return value.includes(lookup)},
+    "more": function (value, lookup) { return value > lookup},
+    "less": function (value, lookup) { return value < lookup}
+};
 function sortTable(n) {
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.getElementById("TableOne");
@@ -47,15 +54,19 @@ function sortTable(n) {
         rows = table.rows;
         for (i = 1; i < (rows.length - 1); i++) {
             shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[n];
-            y = rows[i + 1].getElementsByTagName("TD")[n];
+            x = rows[i].getElementsByTagName("TD")[n].innerHTML.toLowerCase();
+            y = rows[i + 1].getElementsByTagName("TD")[n].innerHTML.toLowerCase();
+            if (n != 1) {
+                x = Number(x);
+                y = Number(y);
+            }
             if (dir == "asc") {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                if (x > y) {
                     shouldSwitch = true;
                     break;
                 }
             } else if (dir == "desc") {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                if (x < y) {
                     shouldSwitch = true;
                     break;
                 }
@@ -81,16 +92,20 @@ function filterTable() {
     table = document.getElementById("TableOne");
     tr = table.getElementsByTagName("TR");
     for (i = 1; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("TD")[0];
+      td = tr[i].getElementsByTagName("TD")[column];
       if (td) {
         txtValue = td.textContent || td.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        if ((column == "2" || "3") && operator != "contains") {
+            input = Number(input);
+            txtValue = Number(txtValue);
+        }
+        if (operatorsFunc[operator](txtValue, input)) {
           tr[i].style.display = "";
         } else {
           tr[i].style.display = "none";
         }
       }
     }
-  }
+}
 </script>
 {% endblock table %}

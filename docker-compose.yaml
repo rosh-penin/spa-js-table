@@ -10,7 +10,6 @@ services:
   tables_backend:
     build: ./
     restart: always
-    command: sh -c "python manage.py migrate"
     depends_on:
       - db
     env_file: ./.env
